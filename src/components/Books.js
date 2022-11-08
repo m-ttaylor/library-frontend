@@ -1,15 +1,10 @@
 import { useQuery } from '@apollo/client'
-import { ALL_BOOKS, CURRENT_USER } from '../queries'
-import { useState } from 'react'
+import { ALL_BOOKS } from '../queries'
 
 const Books = ({ show, genreFilter, setGenreFilter, genres }) => {
   
-  // const result = useQuery(ALL_BOOKS)
-  // const filteredResult = useQuery(ALL_BOOKS, {variables: {genre: genreFilter}})
   const result = useQuery(ALL_BOOKS, {variables: {genre: genreFilter}})
   console.log('result is', result)
-  // const [allBooks] = useQuery(ALL_BOOKS)
-  // const result = allBooks({variables: {genreFilter}})
 
   if (!show) {
     return null
@@ -19,12 +14,8 @@ const Books = ({ show, genreFilter, setGenreFilter, genres }) => {
     return <div>loading...</div>
   }
 
-  // const books = result.data.allBooks
-  // const filteredBooks = filteredResult.data.allBooks
   const filteredBooks = result.data.allBooks
-  // const genres = new Set(books.map(b => b.genres).reduce((a, b) => a.concat(b), []))
 
-  // const filteredBooks = genreFilter !== '' ? books.filter(b => b.genres.includes(genreFilter)) : books
   return (
     <div>
       <h2>books</h2>
@@ -46,7 +37,7 @@ const Books = ({ show, genreFilter, setGenreFilter, genres }) => {
         </tbody>
       </table>
       
-    {[...genres].map((genre, i) => ( // doing bad praxis here as it _should_ be safe; we can't add
+    {[...genres].map((genre, i) => ( // doing bad key praxis here as it _should_ be safe; we can't add
     // genres in this view and we don't care about preserving their relative order. A better solution
     // would require backend changes to store unique genres with keys
       <GenreButton onClick={() => setGenreFilter(genre)} key={i} genre={genre} />

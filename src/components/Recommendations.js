@@ -4,7 +4,6 @@ import { ALL_BOOKS } from '../queries'
 const Recommendations = (props) => {
   console.log('favourite genre is', props.favouriteGenre)
   const result = useQuery(ALL_BOOKS, {variables: {genre: props.favouriteGenre}})
-  // const userResult = useQuery(CURRENT_USER)
 
   if (!props.show) {
     return null
@@ -16,8 +15,6 @@ const Recommendations = (props) => {
     return <div>loading...</div>
   }
 
-  
-  // const filteredBooks = favouriteGenre !== '' ? books.filter(b => b.genres.includes(favouriteGenre)) : books
   return (
     <div>
       <h2>recommendations</h2>

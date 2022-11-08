@@ -10,6 +10,7 @@ const NewBook = ({ show, setError, genreFilter }) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
+  // // old caching solution to earlier exercise before subscription changes
   // const updateBooks = (cache, { data: { addBook } }) => {
   //   cache.modify({ 
   //     fields: {

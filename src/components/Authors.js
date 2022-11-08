@@ -69,7 +69,6 @@ const Authors = ({ show, setError }) => {
       
       <form onSubmit={submit}>
       <Select
-        // defaultValue={selectedAuthor}
         value={selectedAuthor}
         onChange={(selectedAuthor) => handleAuthorChange(selectedAuthor)}
         options={options}
