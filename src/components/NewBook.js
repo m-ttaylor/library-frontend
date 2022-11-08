@@ -9,11 +9,37 @@ const NewBook = ({ show, setError }) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
+  const updateBooks = (cache, { data: { addBook } }) => {
+    cache.modify({ 
+      fields: {
+        allBooks(existingBooks = []) {
+          cache.modify({ 
+            fields: {
+              allBooks(existingBooks = []) {
+                const newBook = addBook
+                cache.writeQuery({
+                  query: ALL_BOOKS,
+                  data: { newBook, ...existingBooks }
+                })
+              }
+            }
+          })
+          return [...existingBooks, addBook];
+          }
+        }
+    })
+  }
+
   const [ createBook ] = useMutation(CREATE_BOOK, {
+    update: updateBooks,
     refetchQueries: [ {query: ALL_BOOKS}, {query: ALL_AUTHORS} ],
+    onQueryUpdated(observableQuery){
+      // Define any custom logic for determining whether to refetch
+        return observableQuery.refetch()
+    },
     onError: (error) => {
-      setError(error.graphQLErrors[0].message)
-    }
+        setError(error.graphQLErrors[0] ? error.graphQLErrors[0].message : 'unexpected error')
+      },
   })
 
   if (!show) {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useQuery } from '@apollo/client'
+import { CURRENT_USER } from './queries'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
@@ -36,13 +37,25 @@ const App = () => {
     }, 1000)
   }
 
+  const userResult = useQuery(CURRENT_USER)
+
+  if (userResult.loading) {
+    return (
+      <div>loading...</div>
+    )
+  }
+  const user = userResult.data.me
+  console.log('user is', user)
+  // favouriteGenre = user ? user.favouriteGenre : ''
+  // console.log('favourite genre is:', favouriteGenre)
+
   return (
     <div>
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         { token ? <button onClick={() => setPage('add')}>add book</button> : null }
-        { token ? <button onClick={() => setPage('recommendations')}>recommendations</button> : null}
+        { token && user ? <button onClick={() => setPage('recommendations')}>recommendations</button> : null}
         <button onClick={() => setPage('login')}>{token? "log out" : "login"}</button>
       </div>
 
@@ -54,7 +67,7 @@ const App = () => {
 
       <NewBook setError={notify} show={page === 'add'} />
 
-      <Recommendations setError={notify} show={page === 'recommendations'} />
+      <Recommendations setError={notify} show={page === 'recommendations'} favouriteGenre={user.favouriteGenre} />
 
       <LoginForm setError={notify} setToken={setToken} logout={logout} token={token} show={page === 'login'} />
     </div>

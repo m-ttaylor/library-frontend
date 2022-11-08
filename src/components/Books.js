@@ -5,21 +5,24 @@ import { useState } from 'react'
 const Books = (props) => {
   const [genreFilter, setGenreFilter] = useState('')
   const result = useQuery(ALL_BOOKS)
+  const filteredResult = useQuery(ALL_BOOKS, {variables: {genre: genreFilter}})
+  console.log('result is', result)
+  // const [allBooks] = useQuery(ALL_BOOKS)
+  // const result = allBooks({variables: {genreFilter}})
 
   if (!props.show) {
     return null
-  }
+  }  
 
-  const books = result.data.allBooks
-
-  const genres = new Set(books.map(b => b.genres).reduce((a, b) => a.concat(b), []))
-
-  if (result.loading) {
+  if (result.loading || filteredResult.loading) {
     return <div>loading...</div>
   }
 
+  const books = result.data.allBooks
+  const filteredBooks = filteredResult.data.allBooks
+  const genres = new Set(books.map(b => b.genres).reduce((a, b) => a.concat(b), []))
 
-  const filteredBooks = genreFilter !== '' ? books.filter(b => b.genres.includes(genreFilter)) : books
+  // const filteredBooks = genreFilter !== '' ? books.filter(b => b.genres.includes(genreFilter)) : books
   return (
     <div>
       <h2>books</h2>
