@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { ALL_BOOKS, CURRENT_USER } from '../queries'
-import { useState } from 'react'
+import { ALL_BOOKS } from '../queries'
 
 const Recommendations = (props) => {
   console.log('favourite genre is', props.favouriteGenre)

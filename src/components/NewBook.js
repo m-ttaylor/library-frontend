@@ -1,38 +1,42 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import {CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS} from '../queries'
+import { updateCache } from '../App'
 
-const NewBook = ({ show, setError }) => {
+const NewBook = ({ show, setError, genreFilter }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-  const updateBooks = (cache, { data: { addBook } }) => {
-    cache.modify({ 
-      fields: {
-        allBooks(existingBooks = []) {
-          cache.modify({ 
-            fields: {
-              allBooks(existingBooks = []) {
-                const newBook = addBook
-                cache.writeQuery({
-                  query: ALL_BOOKS,
-                  data: { newBook, ...existingBooks }
-                })
-              }
-            }
-          })
-          return [...existingBooks, addBook];
-          }
-        }
-    })
-  }
+  // const updateBooks = (cache, { data: { addBook } }) => {
+  //   cache.modify({ 
+  //     fields: {
+  //       allBooks(existingBooks = []) {
+  //         cache.modify({ 
+  //           fields: {
+  //             allBooks(existingBooks = []) {
+  //               const newBook = addBook
+  //               cache.writeQuery({
+  //                 query: ALL_BOOKS,
+  //                 data: { newBook, ...existingBooks }
+  //               })
+  //             }
+  //           }
+  //         })
+  //         return [...existingBooks, addBook];
+  //         }
+  //       }
+  //   })
+  // }
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
-    update: updateBooks,
-    refetchQueries: [ {query: ALL_BOOKS}, {query: ALL_AUTHORS} ],
+    // update: updateBooks,
+    update: (cache, response) => {
+      updateCache(cache, { query: ALL_BOOKS, variables: {genre: genreFilter} }, response.data.addBook)
+    },
+    refetchQueries: [ {query: ALL_BOOKS, variables: {genre: genreFilter}}, {query: ALL_AUTHORS} ],
     onQueryUpdated(observableQuery){
       // Define any custom logic for determining whether to refetch
         return observableQuery.refetch()
